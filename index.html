@@ -40,6 +40,9 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;color:#ddd;font
 #sub{position:fixed;left:50%;bottom:15%;transform:translateX(-50%);z-index:12;font-family:'Nanum Myeongjo',serif;font-size:21px;color:#e6e0d4;text-shadow:0 0 10px #000,0 0 3px #000;text-align:center;opacity:0;transition:opacity .7s;max-width:80%;pointer-events:none;line-height:1.6}
 #sub.red{color:#c41818;font-size:34px;letter-spacing:10px;text-shadow:0 0 18px #500}
 #status{position:absolute;left:28px;bottom:26px;font-size:11px;color:#9d978b;letter-spacing:2px}
+#lives{margin-bottom:10px}
+#lives span{color:#b01818;font-size:15px;letter-spacing:4px;text-shadow:0 0 6px #500}
+#lives span.lost{color:#3a3530;text-shadow:none}
 .bar{width:150px;height:3px;background:rgba(255,255,255,.12);margin:5px 0 12px}
 .bar div{height:100%;width:100%;background:#d8cfb8;transition:background .3s}
 #inv{position:absolute;right:28px;bottom:26px;text-align:right;font-size:13px;color:#cfc9bd;text-shadow:0 0 6px #000}
@@ -104,6 +107,7 @@ button:hover{border-color:#a02020;color:#fff;background:rgba(120,0,0,.25)}
   <div id="prompt"></div>
   <div id="hold" class="hidden"><div></div></div>
   <div id="status">
+    <div id="lives"></div>
     <div>손전등 · <span id="batTxt">100%</span></div><div class="bar"><div id="batBar"></div></div>
     <div id="staWrap">숨<div class="bar"><div id="staBar"></div></div></div>
   </div>
@@ -525,6 +529,51 @@ function silhouetteTex() {
   stains(g, w, h, 8, .3, '80,70,40', 20, 60, false);
   return T(c);
 }
+function artTex(i) {
+  const w = 256, h = 320, [c, g] = mk(w, h);
+  g.fillStyle = '#e4dccb'; g.fillRect(0, 0, w, h);
+  stains(g, w, h, 8, .25, '120,100,70', 20, 80, false);
+  g.fillStyle = ['#7a96b8', '#9ab07a', '#3a2a2a'][i]; g.fillRect(0, 0, w, 120);
+  if (i === 2) { g.fillStyle = '#120c0a'; g.fillRect(58, 70, 140, 240); }
+  g.fillStyle = i === 2 ? '#cfcac0' : '#e0b896'; g.beginPath(); g.ellipse(128, 150, 58, 76, 0, 0, TAU); g.fill();
+  g.fillStyle = '#1a1412';
+  if (i === 2) {
+    g.beginPath(); g.ellipse(128, 100, 68, 46, 0, Math.PI, TAU); g.fill();
+    for (let k = 0; k < 9; k++) g.fillRect(72 + k * 13, 90, 10, rand(60, 150));
+    g.shadowColor = '#ff0000'; g.shadowBlur = 10; g.fillStyle = '#d01010';
+    g.beginPath(); g.arc(106, 150, 5, 0, TAU); g.arc(150, 150, 5, 0, TAU); g.fill(); g.shadowBlur = 0;
+    g.font = `34px ${PEN}`; g.fillStyle = 'rgba(140,10,10,.9)'; g.textAlign = 'center'; g.fillText('같이 그리자', 128, 300);
+  } else {
+    g.beginPath(); g.ellipse(128, 96, 64, 34, 0, Math.PI, TAU); g.fill();
+    if (i === 0) {
+      g.beginPath(); g.ellipse(106, 145, 7, 5, 0, 0, TAU); g.ellipse(150, 145, 7, 5, 0, 0, TAU); g.fill();
+      g.strokeStyle = '#7a2a20'; g.lineWidth = 3; g.beginPath(); g.arc(128, 180, 22, .2, Math.PI - .2); g.stroke();
+    } else {
+      g.strokeStyle = 'rgba(10,10,10,.9)'; g.lineWidth = 6;
+      for (let k = 0; k < 14; k++) { g.beginPath(); g.moveTo(rand(80, 176), rand(110, 200)); g.lineTo(rand(80, 176), rand(110, 200)); g.stroke(); }
+    }
+  }
+  const t = T(c); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t;
+}
+function figureTex() {
+  const w = 256, h = 512, [c, g] = mk(w, h);
+  g.fillStyle = '#d8d6ce';
+  g.beginPath(); g.moveTo(92, 150); g.lineTo(164, 150); g.lineTo(188, 400); g.lineTo(68, 400); g.fill();
+  g.fillRect(70, 160, 18, 150); g.fillRect(168, 160, 18, 150);
+  g.fillStyle = '#b8b4aa'; g.fillRect(100, 400, 18, 100); g.fillRect(138, 400, 18, 100);
+  g.fillStyle = '#c8c4ba'; g.beginPath(); g.ellipse(128, 92, 34, 44, 0, 0, TAU); g.fill();
+  g.fillStyle = '#0a0808'; g.beginPath(); g.ellipse(128, 76, 44, 40, 0, Math.PI, TAU); g.fill();
+  for (let k = 0; k < 12; k++) g.fillRect(86 + k * 7, 70, 8, rand(110, 210));
+  g.shadowColor = '#ff0000'; g.shadowBlur = 8; g.fillStyle = '#e01010';
+  g.beginPath(); g.arc(114, 100, 3, 0, TAU); g.arc(142, 100, 3, 0, TAU); g.fill();
+  const t = T(c); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t;
+}
+function onAirTex() {
+  const [c, g] = mk(256, 96);
+  g.fillStyle = '#0a0606'; g.fillRect(0, 0, 256, 96);
+  g.font = `bold 54px ${SANS}`; g.fillStyle = '#ff2a1a'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('ON AIR', 128, 50);
+  const t = T(c); t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping; return t;
+}
 function noiseCanvas() { const [c, g] = mk(96, 72); return { c, g, tex: (() => { const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.magFilter = THREE.NearestFilter; return t; })() }; }
 
 /* =========================================================
@@ -614,11 +663,13 @@ function floorMat(tex, rx, ry, rough = .6) {
 /* =========================================================
    MAP (1칸 = 1m)
    ========================================================= */
-const W = 58, H = 23, WH = 3.2;
-const EMPTY = 0, WALL = 1, WIN = 2, DOOR = 3, BLOCK = 4, GATE = 5;
-const cells = new Uint8Array(W * H).fill(WALL);
-const I = (x, z) => z * W + x;
-const cellAt = (x, z) => (x < 0 || z < 0 || x >= W || z >= H) ? WALL : cells[I(x, z)];
+// ㅁ자 건물: 기존 동(z 0~22)이 남쪽 변, 북쪽으로 z=-56까지 확장
+const W = 80, ZMIN = -56, ZMAX = 22, H = ZMAX - ZMIN + 1, WH = 3.2;
+const EMPTY = 0, WALL = 1, WIN = 2, DOOR = 3, BLOCK = 4, GATE = 5, VOID = 6;
+const cells = new Uint8Array(W * H).fill(VOID);
+const I = (x, z) => (z - ZMIN) * W + x;
+const cellX = i => i % W, cellZ = i => ((i / W) | 0) + ZMIN;
+const cellAt = (x, z) => (x < 0 || z < ZMIN || x >= W || z > ZMAX) ? WALL : cells[I(x, z)];
 const doorMap = new Map();
 const obstacles = [];
 function carve(x0, z0, x1, z1, v = EMPTY) { for (let z = z0; z <= z1; z++) for (let x = x0; x <= x1; x++) cells[I(x, z)] = v; }
@@ -629,34 +680,69 @@ const ROOMS = [
   { id: 'c3', name: '2학년 3반', x0: 19, x1: 26, north: true, type: 'class' },
   { id: 'music', name: '음악실', x0: 28, x1: 35, north: true, type: 'music' },
   { id: 'sci', name: '과학실', x0: 37, x1: 44, north: true, type: 'sci' },
-  { id: 'wc', name: '여자 화장실', x0: 46, x1: 56, north: true, type: 'wc' },
+  { id: 'wc', name: '화장실', x0: 46, x1: 56, north: true, type: 'wc' },
   { id: 'staff', name: '교무실', x0: 1, x1: 8, north: false, type: 'staff' },
   { id: 'nurse', name: '보건실', x0: 10, x1: 17, north: false, type: 'nurse' },
   { id: 'lobby', name: '중앙현관', x0: 19, x1: 26, north: false, type: 'lobby' },
   { id: 'c4', name: '2학년 4반', x0: 28, x1: 35, north: false, type: 'class' },
   { id: 'lib', name: '도서실', x0: 37, x1: 44, north: false, type: 'lib' },
   { id: 'mnt', name: '관리실', x0: 46, x1: 56, north: false, type: 'mnt' },
+  { id: 'c5', name: '2학년 5반', x0: 58, x1: 65, north: true, type: 'class' },
+  { id: 'art', name: '미술실', x0: 67, x1: 74, north: true, type: 'art' },
+  { id: 'c6', name: '2학년 6반', x0: 58, x1: 65, north: false, type: 'class' },
+  { id: 'broad', name: '방송실', x0: 67, x1: 74, north: false, type: 'broad' },
+  // 북쪽 동
+  { id: 'n1', name: '1학년 1반', x0: 10, x1: 17, north: true, z0: -55, type: 'class' },
+  { id: 'n2', name: '1학년 2반', x0: 19, x1: 26, north: true, z0: -55, type: 'class' },
+  { id: 'n3', name: '1학년 3반', x0: 37, x1: 44, north: true, z0: -55, type: 'class' },
+  { id: 'av', name: '시청각실', x0: 46, x1: 56, north: true, z0: -55, type: 'av' },
+  // 동쪽 동 (문이 x=75 세로 벽에 있음)
+  { id: 'lockr', name: '탈의실', x0: 67, x1: 74, z0: -10, side: 'e', type: 'lockr' },
+  { id: 'counsel', name: '상담실', x0: 67, x1: 74, z0: -28, side: 'e', type: 'counsel' },
+];
+// 열리지 않는 방 (문과 팻말만 있음)
+const FAKE_DOORS = [
+  { name: '창고', x: 5, z: -47 }, { name: '가사실', x: 29, z: -47 }, { name: '1학년 4반', x: 59, z: -47 }, { name: '기술실', x: 68, z: -47 },
+  { name: '체육창고', x: 75, z: -16, vert: true }, { name: '자료실', x: 75, z: -36, vert: true },
 ];
 const RM = {};
 for (const r of ROOMS) {
   RM[r.id] = r;
-  r.z0 = r.north ? 1 : 14; r.z1 = r.north ? 8 : 21; r.wz = r.north ? 9 : 13;
+  if (r.side === 'e') r.z1 = r.z0 + 7;
+  else { r.z0 ??= r.north ? 1 : 14; r.z1 = r.z0 + 7; r.wz = r.north ? r.z1 + 1 : r.z0 - 1; }
   r.cx = (r.x0 + r.x1 + 1) / 2; r.cz = (r.z0 + r.z1 + 1) / 2;
 }
 const wp = (r, lx, lz) => [r.x0 + lx, r.north ? r.z0 + lz : r.z1 + 1 - lz];
 function roomAt(x, z) { for (const r of ROOMS) if (x >= r.x0 && x < r.x1 + 1 && z >= r.z0 && z < r.z1 + 1) return r; return null; }
 
 function buildGrid() {
-  carve(1, 10, 56, 12);
-  for (const r of ROOMS) {
-    carve(r.x0, r.z0, r.x1, r.z1);
-    if (r.id === 'lobby') continue;
-    const ez = r.north ? 0 : 22;
-    for (let x = r.x0; x <= r.x1; x++) if ((x - r.x0) % 4 !== 3) cells[I(x, ez)] = WIN;
-  }
+  carve(1, 10, W - 2, 12);
+  carve(76, -46, 78, 12);
+  carve(1, -46, 78, -44);
+  carve(1, -43, 3, -1);
+  for (const r of ROOMS) carve(r.x0, r.z0, r.x1, r.z1);
   carve(19, 13, 26, 13);
+  for (let z = ZMIN; z <= ZMAX; z++) for (let x = 0; x < W; x++) {
+    if (cells[I(x, z)] !== VOID) continue;
+    let near = false;
+    for (let dz = -1; dz <= 1 && !near; dz++) for (let dx = -1; dx <= 1; dx++) if (cellAt(x + dx, z + dz) === EMPTY) { near = true; break; }
+    if (near) cells[I(x, z)] = WALL;
+  }
+  // 반대편이 복도·방이 아닌 벽만 창문으로
+  const win = (x, z, ox, oz) => { if (cellAt(x, z) === WALL && cellAt(x + ox, z + oz) !== EMPTY) cells[I(x, z)] = WIN; };
+  const step = v => ((v % 4) + 4) % 4 !== 3;
+  for (const r of ROOMS) {
+    if (r.id === 'lobby') continue;
+    if (r.side === 'e') { for (let z = r.z0; z <= r.z1; z++) if ((z - r.z0) % 4 !== 3) win(r.x0 - 1, z, -1, 0); continue; }
+    const ez = r.north ? r.z0 - 1 : r.z1 + 1;
+    for (let x = r.x0; x <= r.x1; x++) if ((x - r.x0) % 4 !== 3) win(x, ez, 0, r.north ? -1 : 1);
+  }
+  for (let z = -45; z <= 12; z++) if (step(z)) win(W - 1, z, 1, 0);
+  for (let z = -42; z <= -1; z++) if (step(z)) win(75, z, -1, 0);
+  for (let x = 5; x <= 74; x++) if (step(x)) win(x, -43, 0, 1);
+  for (let z = -45; z <= -1; z++) if (step(z)) win(0, z, -1, 0);
+  for (let z = -42; z <= -1; z++) if (step(z)) win(4, z, 1, 0);
   for (let x = 21; x <= 24; x++) cells[I(x, 22)] = GATE;
-  for (let z = 10; z <= 12; z++) cells[I(57, z)] = WIN;
 }
 
 /* =========================================================
@@ -687,11 +773,12 @@ const interactables = [];
 const doors = [];
 const DOOR_GEO = new THREE.BoxGeometry(.98, 2.35, .07);
 class Door {
-  constructor(x, z, room, dir, locked = false) {
-    Object.assign(this, { x, z, room, dir, locked, open: false, t: 0 });
+  constructor(x, z, room, dir, locked = false, vert = false) {
+    Object.assign(this, { x, z, room, dir, locked, vert, open: false, t: 0 });
     this.mesh = new THREE.Mesh(DOOR_GEO, [M.doorSide, M.doorSide, M.doorSide, M.doorSide, M.door, M.door]);
-    this.bx = x + .5;
-    this.mesh.position.set(this.bx, 1.175, z + .5);
+    this.bx = vert ? z + .5 : x + .5;
+    this.mesh.position.set(x + .5, 1.175, z + .5);
+    if (vert) this.mesh.rotation.y = Math.PI / 2;
     this.mesh.castShadow = this.mesh.receiveShadow = true;
     scene.add(this.mesh);
     cells[I(x, z)] = DOOR; doorMap.set(I(x, z), this); doors.push(this);
@@ -710,6 +797,7 @@ class Door {
       } else {
         A.locked();
         if (this.room.id === 'staff') sub('잠겨 있다. 교무실 열쇠가 필요해.');
+        else if (this.room.fake) sub(`${this.room.name}... 잠겨 있다.`);
         else sub('잠겨 있다.');
       }
       return;
@@ -725,7 +813,7 @@ class Door {
   }
   update(dt) {
     this.t = clamp(this.t + (this.open ? dt : -dt) * 2.4, 0, 1);
-    this.mesh.position.x = this.bx + this.dir * this.t * .95;
+    this.mesh.position[this.vert ? 'z' : 'x'] = this.bx + this.dir * this.t * .95;
   }
 }
 
@@ -1010,8 +1098,129 @@ function furnishMnt(r) {
   for (let k = 0; k < 4; k++) { const sx = ux + rand(-.6, .6), sz = uz + rand(-1, 1); box(.5, .4, .5, std({ color: 0x7a6040, roughness: 1 }), sx, .2 + (k === 3 ? .4 : 0), sz, { ry: rand(0, 1) }); solidC(sx, sz, .55, .55); }
   fixtureList.push([49, 18, 0], [53, 18, 0]);
 }
+/* ---------- 미술실 ---------- */
+let bustHead = null;
+function addEasel(x, z, ry, tex) {
+  const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g);
+  for (const s of [-1, 1]) box(.04, 1.75, .04, M.wood, s * .3, .87, 0, { parent: g }).rotation.z = s * .08;
+  box(.04, 1.7, .04, M.wood, 0, .83, -.35, { parent: g }).rotation.x = .2;
+  box(.7, .04, .1, M.wood, 0, .9, .04, { parent: g });
+  box(.64, .8, .02, M.white, 0, 1.32, .055, { parent: g });
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(.62, .78), std({ map: tex, roughness: .9 })); p.position.set(0, 1.32, .067); g.add(p);
+  solidC(x, z, .75, .75);
+}
+function furnishArt(r) {
+  addBoard(r.id, r.x0, wp(r, 0, 4.6)[1], [{ t: '미술 — 자화상 그리기', x: 40, y: 80, s: 52 }, { t: '거울 속 나를 자세히 관찰할 것', x: 40, y: 165, s: 42 }, { t: '눈은 그리지 마', x: 640, y: 245, s: 40, c: 'rgba(200,60,50,.8)' }], 3.6);
+  const paints = [0x9a1a1a, 0x1a3a8a, 0xc8a020, 0x2a7a3a].map(color => std({ color, roughness: .3 }));
+  for (const lx of [3.0, 5.6]) for (const lz of [2.2, 4.8]) {
+    const [x, z] = wp(r, lx, lz);
+    box(1.5, .05, 1.1, M.wood, x, .76, z); box(1.3, .72, .9, M.darkWood, x, .36, z); solidC(x, z, 1.5, 1.1);
+    for (let k = 0; k < 3; k++) { const pt = new THREE.Mesh(new THREE.CylinderGeometry(.04, .04, .08, 10), pick(paints)); pt.position.set(x - .5 + k * .12, .825, z + rand(-.35, .35)); pt.castShadow = true; scene.add(pt); }
+    for (const s of [-1, 1]) placeDesk(x + rand(-.4, .4), z + s * .85, { chairOnly: true, ry: rand(0, TAU) });
+  }
+  [2.5, 4.2, 5.9].forEach((lz, i) => { const [x, z] = wp(r, 7.3, lz); addEasel(x, z, FACE.nx + rand(-.2, .2), artTex(i)); });
+  const [bx, bz] = wp(r, .8, 1);
+  box(.45, 1.0, .45, M.white, bx, .5, bz); solidC(bx, bz, .5, .5);
+  const nk = new THREE.Mesh(new THREE.CylinderGeometry(.06, .09, .2, 12), M.white); nk.position.set(bx, 1.1, bz); nk.castShadow = true; scene.add(nk);
+  bustHead = new THREE.Group(); bustHead.position.set(bx, 1.32, bz); scene.add(bustHead);
+  const hs = new THREE.Mesh(new THREE.SphereGeometry(.13, 16, 12), M.white); hs.scale.y = 1.25; hs.castShadow = true; bustHead.add(hs);
+  for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(.022, 8, 8), M.black); e.position.set(s * .045, .03, .115); bustHead.add(e); }
+  decal(decalText('나도 그려줘', 512, 160, 80), 1.4, .45, r.x1 + .988, 2.45, wp(r, 0, 4.2)[1], FACE.nx);
+  decal(handTex(), .8, .8, r.x1 + .988, 1.2, wp(r, 0, 6.8)[1], FACE.nx, .7);
+  new HideLocker(r.x1, r.z0, -1, 0);
+  for (const lx of [2.5, 5.5]) for (const lz of [2.5, 5.5]) { const [x, z] = wp(r, lx, lz); fixtureList.push([x, z, 0]); }
+}
+/* ---------- 방송실 ---------- */
+const onAir = {};
+function furnishBroad(r) {
+  const [cx, cz] = wp(r, 4, .6);
+  box(3.6, .05, .9, M.wood, cx, .8, cz); box(3.5, .76, .85, M.darkMetal, cx, .38, cz); solidC(cx, cz, 3.6, .9);
+  box(1.3, .07, .5, M.darkMetal, cx - .7, .86, cz + .05);
+  for (let k = 0; k < 10; k++) box(.035, .035, .035, k % 3 ? M.white : M.redPlastic, cx - 1.22 + (k % 5) * .13, .91, cz - .05 + Math.floor(k / 5) * .18, { cast: false });
+  box(.55, .4, .06, M.black, cx + 1.1, 1.06, cz + .2); box(.08, .2, .08, M.darkMetal, cx + 1.1, .9, cz + .2);
+  const mx = cx + .2, mz = cz - .1;
+  const arm = new THREE.Mesh(new THREE.CylinderGeometry(.012, .012, .35, 8), M.darkMetal); arm.position.set(mx, 1.0, mz); scene.add(arm);
+  const mic = new THREE.Mesh(new THREE.SphereGeometry(.045, 12, 10), M.darkMetal); mic.position.set(mx, 1.2, mz); mic.scale.y = 1.3; scene.add(mic);
+  placeDesk(cx - .3, cz - 1.0, { chairOnly: true, ry: Math.PI / 2 + rand(-.3, .3) });
+  const [, s1] = wp(r, 0, 3.4), [, s2] = wp(r, 0, 6.8);
+  box(.42, 1.9, Math.abs(s2 - s1), M.book, r.x0 + .21, .95, (s1 + s2) / 2); solid(r.x0, Math.min(s1, s2), r.x0 + .44, Math.max(s1, s2));
+  for (const lz of [1.2, 6.8]) box(.3, .45, .3, M.black, r.x1 + .8, 2.55, wp(r, 0, lz)[1], { cast: false });
+  addTV(r.x1 + .55, wp(r, 0, 4.5)[1], FACE.nx);
+  const tex = onAirTex();
+  onAir.mat = std({ map: tex, emissive: 0xffffff, emissiveMap: tex, emissiveIntensity: 0, roughness: .5 });
+  plane(.7, .26, onAir.mat, r.cx, 2.6, r.z0 + .015, FACE.pz);
+  onAir.light = new THREE.PointLight(0xff2010, 0, 5, 2); onAir.light.position.set(r.cx, 2.4, r.z0 + .4); scene.add(onAir.light);
+  interactables.push({
+    pos: new THREE.Vector3(mx, 1.15, mz), r: .4, range: 2.0, label: () => '마이크에 대고 말하기', active: () => !F.mic,
+    use: () => {
+      F.mic = true; A.click(); sub('"...저기요. 거기 누구 없어요?"', 2.5);
+      later(2.8, () => {
+        noise({ f: 1500, q: .7, dur: 1.5, gain: .15, wet: .8 }); A.giggle(); flickerT = .5;
+        sub('스피커 너머에서 대답이 들렸다.\n"있어. 계속 여기 있었어."', 4.5, true);
+        ghostHear(player.x, player.z, 60);
+      });
+    },
+  });
+  new HideLocker(r.x1, r.z1, -1, 0);
+  for (const lx of [2.5, 5.5]) for (const lz of [2.5, 5.5]) { const [x, z] = wp(r, lx, lz); fixtureList.push([x, z, 0]); }
+}
+function onAirOn() {
+  onAir.mat.emissiveIntensity = 1.3; onAir.light.intensity = 1.6;
+  noise({ f: 1800, q: .6, dur: 2.2, gain: .12, attack: .05, wet: .7 }); A.buzz();
+  later(1.4, () => { A.whisper(.12); sub('ON AIR 불이... 혼자 켜졌다.', 3, true); });
+}
+
 /* ---------- 중앙현관 ---------- */
 const gate = { doors: [], progress: 0, opened: false };
+function buildChainLock() {
+  const chain = new THREE.Group(); chain.position.set(23, 0, 22.42); scene.add(chain);
+  const steel = std({ color: 0x707070, metalness: .9, roughness: .35, emissive: 0x060606 });
+  const links = [];
+  const along = (curve, pitch) => {
+    const pts = [curve(0)]; let len = 0;
+    for (let i = 1; i <= 240; i++) { const p = curve(i / 240); len += p.distanceTo(pts[pts.length - 1]); pts.push(p); }
+    const n = Math.round(len / pitch);
+    let acc = 0, k = 0, next = 0;
+    for (let i = 1; i < pts.length && links.length < 400; i++) {
+      const seg = pts[i].distanceTo(pts[i - 1]);
+      while (acc + seg >= next && k < n) {
+        const p = pts[i - 1].clone().lerp(pts[i], (next - acc) / seg);
+        links.push([p, pts[i].clone().sub(pts[i - 1]).normalize()]); k++; next = k * len / n;
+      }
+      acc += seg;
+    }
+  };
+  // 양쪽 손잡이(x=±0.2)를 두 바퀴 감는 고리
+  for (const [y0, tilt] of [[1.14, .02], [1.06, -.025]]) {
+    along(u => {
+      const t = u * TAU, c = Math.cos(t), s = Math.sin(t);
+      return new THREE.Vector3(c * .245, y0 + c * tilt - (1 - Math.abs(c)) * .035, s * .04);
+    }, .034);
+  }
+  along(u => new THREE.Vector3(.07 + Math.sin(u * 2.4) * .015, 1.02 - u * .2, -.04 - u * .01), .034);
+  const geo = new THREE.TorusGeometry(.0135, .0042, 6, 12); geo.scale(1.45, 1, 1);
+  const im = new THREE.InstancedMesh(geo, steel, links.length);
+  const m4 = new THREE.Matrix4(), up = new THREE.Vector3(), side = new THREE.Vector3(), ref = new THREE.Vector3();
+  links.forEach(([p, d], i) => {
+    ref.set(0, 1, 0); if (Math.abs(d.y) > .9) ref.set(0, 0, 1);
+    side.crossVectors(d, ref).normalize(); up.crossVectors(side, d);
+    if (i % 2) m4.makeBasis(d, side, up.clone().negate()); else m4.makeBasis(d, up, side);
+    m4.setPosition(p); im.setMatrixAt(i, m4);
+  });
+  im.castShadow = true; chain.add(im);
+
+  const brass = std({ color: 0xb08a3a, metalness: .85, roughness: .32, emissive: 0x1a1205 });
+  const lock = new THREE.Group(); lock.position.set(0, .982, -.045); lock.rotation.set(-.12, 0, .1); chain.add(lock);
+  const shackle = new THREE.Mesh(new THREE.TorusGeometry(.024, .0055, 8, 18, Math.PI), steel); lock.add(shackle);
+  for (const sx of [-.024, .024]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(.0055, .0055, .036, 8), steel); leg.position.set(sx, -.018, 0); lock.add(leg); }
+  const body = new THREE.Mesh(new THREE.BoxGeometry(.074, .066, .03), brass); body.position.y = -.068; lock.add(body);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(.015, .015, .074, 12), brass); base.rotation.z = Math.PI / 2; base.position.y = -.101; lock.add(base);
+  const plate = new THREE.Mesh(new THREE.BoxGeometry(.05, .012, .002), steel); plate.position.set(0, -.048, -.016); lock.add(plate);
+  const hole = new THREE.Mesh(new THREE.CylinderGeometry(.0065, .0065, .003, 12), M.black); hole.rotation.x = Math.PI / 2; hole.position.set(0, -.074, -.0155); lock.add(hole);
+  const slit = new THREE.Mesh(new THREE.BoxGeometry(.004, .013, .003), M.black); slit.position.set(0, -.084, -.0155); lock.add(slit);
+  lock.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  return chain;
+}
 function furnishLobby(r) {
   box(.45, 1.25, 5.5, M.shoe, 19.23, .625, 18.25); solid(19, 15.5, 19.46, 21);
   box(.45, 1.25, 5.5, M.shoe, 26.77, .625, 18.25, { ry: Math.PI }); solid(26.54, 15.5, 27, 21);
@@ -1023,21 +1232,18 @@ function furnishLobby(r) {
     const gl = new THREE.Mesh(new THREE.BoxGeometry(1.9, 2.45, .03), M.glass); gl.position.set(s * .95, 1.3, 0); piv.add(gl);
     box(1.9, .08, .06, M.metal, s * .95, .1, 0, { parent: piv }); box(1.9, .06, .06, M.metal, s * .95, 2.5, 0, { parent: piv });
     box(.04, .5, .04, M.metal, s * 1.75, 1.1, -.08, { parent: piv });
+    for (const hy of [.88, 1.32]) box(.03, .03, .07, M.metal, s * 1.75, hy, -.045, { parent: piv });
     gate.doors.push({ piv, s });
   }
-  const chain = new THREE.Group(); chain.position.set(23, 1.1, 22.4); scene.add(chain);
-  const linkM = std({ color: 0x5a5a5a, metalness: .9, roughness: .4 });
-  for (let i = 0; i < 8; i++) { const l = new THREE.Mesh(new THREE.TorusGeometry(.035, .01, 6, 10), linkM); l.position.set(-.28 + i * .08, Math.sin(i * .7) * .03, 0); l.rotation.y = i % 2 ? Math.PI / 2 : 0; chain.add(l); }
-  const lock = new THREE.Mesh(new THREE.BoxGeometry(.09, .1, .04), std({ color: 0x9a8040, metalness: .8, roughness: .3 })); lock.position.set(0, -.08, -.02); chain.add(lock);
-  gate.chain = chain;
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(90, 40), std({ color: 0x121214, roughness: .95 }));
-  ground.rotation.x = -Math.PI / 2; ground.position.set(29, -.01, 43); ground.receiveShadow = true; scene.add(ground);
+  gate.chain = buildChainLock();
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(120, 40), std({ color: 0x121214, roughness: .95 }));
+  ground.rotation.x = -Math.PI / 2; ground.position.set(38, -.01, 43); ground.receiveShadow = true; scene.add(ground);
   box(.12, 5, .12, M.darkMetal, 25.5, 2.5, 30);
   box(.6, .15, .3, M.darkMetal, 25.2, 5, 30);
   const lamp = new THREE.PointLight(0xff9a40, 30, 26, 2); lamp.position.set(25, 4.7, 30); scene.add(lamp);
   const bulb = new THREE.Mesh(new THREE.SphereGeometry(.12, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffc080 })); bulb.position.set(25, 4.85, 30); scene.add(bulb);
-  for (let x = -10; x < 70; x += 2.5) box(.08, 1.8, .08, M.darkMetal, x, .9, 40, { cast: false });
-  box(80, .06, .06, M.darkMetal, 30, 1.7, 40, { cast: false });
+  for (let x = -10; x < 90; x += 2.5) box(.08, 1.8, .08, M.darkMetal, x, .9, 40, { cast: false });
+  box(100, .06, .06, M.darkMetal, 40, 1.7, 40, { cast: false });
   interactables.push({
     pos: new THREE.Vector3(23, 1.1, 22.3), r: .9, range: 2.4, gate: true,
     label: () => (inv.frontKey && inv.cutter) ? '쇠사슬 끊고 문 열기 (E 길게)' : '현관문 살펴보기',
@@ -1054,6 +1260,93 @@ function furnishLobby(r) {
   fixtureList.push([21, 17, 0], [25, 17, 0], [21, 20, 0], [25, 20, 0]);
 }
 
+/* ---------- 시청각실 ---------- */
+const av = {};
+function furnishAV(r) {
+  box(.08, 2.5, 4.4, M.darkMetal, r.x0 + .04, 1.7, r.cz, { cast: false });
+  av.screenM = new THREE.MeshBasicMaterial({ map: cctv.tex, color: 0x000000 });
+  plane(4.2, 2.3, av.screenM, r.x0 + .09, 1.7, r.cz, FACE.px);
+  av.lensM = std({ color: 0x222222, emissive: 0xcfd8ff, emissiveIntensity: 0 });
+  box(.4, .2, .4, M.darkMetal, r.cx + 1, WH - .25, r.cz);
+  box(.04, .1, .1, av.lensM, r.cx + .78, WH - .25, r.cz, { cast: false });
+  for (const lx of [3.2, 4.6, 6.0, 7.4, 8.8]) for (const lz of [1.2, 2.2, 3.2, 4.4, 5.4]) {
+    const [x, z] = wp(r, lx, lz); placeDesk(x, z, { chairOnly: true, ry: rand(-.12, .12) });
+  }
+  for (const lz of [.6, 7.2]) box(.35, .55, .3, M.black, r.x0 + .3, 2.6, wp(r, 0, lz)[1], { cast: false });
+  new HideLocker(r.x1, r.z0, -1, 0);
+  for (const lx of [3, 6, 9]) for (const lz of [2.5, 5.5]) { const [x, z] = wp(r, lx, lz); fixtureList.push([x, z, 0]); }
+}
+/* ---------- 탈의실 ---------- */
+const lockr = {};
+function furnishLockerRoom(r) {
+  const geo = new THREE.BoxGeometry(.85, 2.0, .55), S = M.lockerSide;
+  for (const [z, front] of [[r.z0 + .3, 4], [r.z1 + .7, 5]]) {
+    for (let k = 0; k < 7; k++) {
+      const x = r.x0 + .5 + k * .9, mats = [S, S, S, S, S, S];
+      const bang = front === 4 && k === 3;
+      mats[front] = bang ? M.black : M.locker;
+      const m = new THREE.Mesh(geo, mats); m.position.set(x, 1.0, z); m.castShadow = m.receiveShadow = true; scene.add(m);
+      if (bang) {
+        lockr.unit = m;
+        lockr.door = new THREE.Group(); lockr.door.position.set(x - .425, 0, z + .29); scene.add(lockr.door);
+        box(.85, 1.95, .03, M.locker, .425, 1.0, 0, { parent: lockr.door });
+      }
+    }
+    solid(r.x0, z - .3, r.x0 + 6.4, z + .3);
+  }
+  const bx = r.x0 + 3.2, bz = (r.z0 + r.z1 + 1) / 2;
+  box(4, .06, .4, M.wood, bx, .45, bz); for (const s of [-1.8, 1.8]) box(.06, .42, .36, M.darkMetal, bx + s, .21, bz);
+  solidC(bx, bz, 4, .4);
+  new HideLocker(r.x1, r.z0 + 4, -1, 0);
+  for (const lx of [2.5, 5.5]) for (const lz of [2.5, 5.5]) fixtureList.push([r.x0 + lx, r.z0 + lz, 0]);
+}
+/* ---------- 상담실 ---------- */
+const counsel = {};
+function furnishCounsel(r) {
+  const sofaM = std({ color: 0x5a3a30, roughness: .95 }), cz = r.cz;
+  box(.8, .42, 2.4, sofaM, r.x0 + .6, .21, cz); box(.22, .55, 2.4, sofaM, r.x0 + .25, .65, cz);
+  for (const s of [-1, 1]) box(.8, .55, .2, sofaM, r.x0 + .6, .3, cz + s * 1.2);
+  solid(r.x0, cz - 1.3, r.x0 + 1, cz + 1.3);
+  box(.7, .4, 1.2, M.wood, r.x0 + 1.9, .2, cz); solidC(r.x0 + 1.9, cz, .7, 1.2);
+  const dx = r.x0 + 5, dz = r.z0 + .7;
+  box(1.4, .75, .7, M.darkWood, dx, .375, dz); solidC(dx, dz, 1.4, .7);
+  box(.18, .06, .22, M.black, dx, .78, dz + .05); box(.2, .04, .05, M.black, dx, .83, dz + .05);
+  counsel.phone = new THREE.Vector3(dx, .85, dz + .05);
+  box(2.0, 1.8, .4, M.book, r.x0 + 1.6, .9, r.z0 + .2); solidC(r.x0 + 1.6, r.z0 + .2, 2, .4);
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(.16, .12, .35, 10), M.darkWood); pot.position.set(r.x1 + .6, .175, r.z1 + .6); scene.add(pot);
+  const leaf = new THREE.Mesh(new THREE.SphereGeometry(.35, 8, 6), std({ color: 0x1a2a14, roughness: 1 })); leaf.position.set(r.x1 + .6, .7, r.z1 + .6); scene.add(leaf);
+  solidC(r.x1 + .6, r.z1 + .6, .5, .5);
+  const doll = new THREE.Group(); doll.position.set(r.x0 + .7, .42, cz + .3); doll.rotation.y = FACE.px; scene.add(doll);
+  const dress = new THREE.Mesh(new THREE.CylinderGeometry(.05, .12, .3, 10), std({ color: 0xc8c0b0, roughness: .9 })); dress.position.y = .15; doll.add(dress);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(.075, 12, 10), std({ color: 0xe0d6c8, roughness: .6 })); head.position.y = .37; doll.add(head);
+  const hair = new THREE.Mesh(new THREE.SphereGeometry(.08, 12, 10, 0, TAU, 0, Math.PI * .6), M.black); hair.position.y = .38; doll.add(hair);
+  box(.13, .24, .03, M.black, 0, .26, -.06, { parent: doll });
+  for (const s of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(.012, 6, 6), M.black); e.position.set(s * .026, .38, .068); doll.add(e); }
+  doll.traverse(o => { if (o.isMesh) o.castShadow = true; });
+  counsel.doll = doll;
+  new HideLocker(r.x1, r.z0 + 3, -1, 0);
+  for (const lx of [2.5, 5.5]) for (const lz of [2.5, 5.5]) fixtureList.push([r.x0 + lx, r.z0 + lz, 0]);
+}
+/* ---------- 북·동·서쪽 복도 ---------- */
+function furnishWings() {
+  for (const x of [8, 22, 34, 50, 62, 72]) new HideLocker(x, -44, 0, -1);
+  for (const z of [-8, -22, -40]) new HideLocker(3, z, -1, 0);
+  for (const z of [4, -12, -24, -32, -41]) new HideLocker(78, z, -1, 0);
+  for (let x = 6; x <= 72; x += 6) if (x !== 42) fixtureList.push([x, -44.5, 0]);
+  for (let z = -40; z <= 6; z += 6) if (z !== -22) fixtureList.push([77.5, z, 1]);
+  for (let z = -40; z <= -4; z += 6) if (z !== -34) fixtureList.push([2.5, z, 1]);
+  decal(posterTex('missing'), .55, .78, 13.5, 1.55, -45.988, FACE.pz);
+  decal(posterTex('quiet'), .55, .78, 33.5, 1.55, -45.988, FACE.pz);
+  decal(posterTex('run'), .55, .78, 62.5, 1.55, -45.988, FACE.pz);
+  decal(posterTex('missing'), .55, .78, 76.012, 1.55, -6.5, FACE.px);
+  decal(posterTex('quiet'), .55, .78, 76.012, 1.55, -24.5, FACE.px);
+  decal(decalText('돌아가', 400, 160, 90), 1.1, .44, 2.5, 2.65, -.012, FACE.nz);
+  for (const f of FAKE_DOORS) {
+    if (f.vert) addSign(f.name, 76.38, f.z + .5, 'z');
+    else addSign(f.name, f.x + .5, f.z + 1.38, 'x');
+  }
+}
+
 /* ---------- 복도 ---------- */
 function furnishCorridor() {
   for (let k = 0; k < 14; k++) {
@@ -1064,28 +1357,32 @@ function furnishCorridor() {
   solid(1, 10, 3.4, 13);
   decal(decalText('계단 ↑', 300, 120, 80, 'rgba(25,25,25,.85)'), .9, .36, .99 + .02, 2.4, 11.5, FACE.px);
   interactables.push({ pos: new THREE.Vector3(3.2, 1.0, 11.5), r: 1.2, range: 2.2, label: () => '살펴보기', use: () => sub('계단이 책걸상으로 막혀 있다.\n...누가 이렇게 쌓아 둔 거지?', 4) });
-  for (const x of [4, 14, 22, 32, 41, 52]) new HideLocker(x, 10, 0, 1);
-  for (let x = 6; x <= 54; x += 6) if (x !== 12 && x !== 30) fixtureList.push([x, 11.5, 0]);
+  for (const x of [4, 14, 22, 32, 41, 52, 62, 70]) new HideLocker(x, 10, 0, 1);
+  for (let x = 6; x <= W - 4; x += 6) if (x !== 12 && x !== 30 && x !== 66) fixtureList.push([x, 11.5, 0]);
   decal(posterTex('run'), .55, .78, 5.9, 1.55, 10.012, FACE.pz);
   decal(posterTex('missing'), .55, .78, 23.6, 1.55, 10.012, FACE.pz);
   decal(posterTex('quiet'), .55, .78, 39.6, 1.55, 10.012, FACE.pz);
   decal(posterTex('missing'), .55, .78, 13.5, 1.55, 12.988, FACE.nz);
   decal(posterTex('run'), .55, .78, 31.5, 1.55, 12.988, FACE.nz);
   decal(posterTex('missing'), .55, .78, 40.5, 1.55, 12.988, FACE.nz);
-  for (const x of [18.5, 36.5]) { const ex = new THREE.Mesh(new THREE.CylinderGeometry(.08, .08, .5, 12), M.red); ex.position.set(x, .25, 12.8); ex.castShadow = true; scene.add(ex); solidC(x, 12.8, .2, .2); }
+  decal(posterTex('quiet'), .55, .78, 60.5, 1.55, 10.012, FACE.pz);
+  decal(posterTex('missing'), .55, .78, 70.5, 1.55, 12.988, FACE.nz);
+  decal(decalText('여기까지 와버렸네', 600, 160, 70), 1.8, .48, W - 1.012, 2.25, 11.5, FACE.nx);
+  for (const x of [18.5, 36.5, 57.5]) { const ex = new THREE.Mesh(new THREE.CylinderGeometry(.08, .08, .5, 12), M.red); ex.position.set(x, .25, 12.8); ex.castShadow = true; scene.add(ex); solidC(x, 12.8, .2, .2); }
   const alarmM = new THREE.MeshBasicMaterial({ color: 0xff1a10 });
-  for (const x of [9.5, 27.5, 45.5]) { const a = new THREE.Mesh(new THREE.SphereGeometry(.05, 10, 8), alarmM); a.position.set(x, 1.95, 12.97); scene.add(a); }
+  for (const x of [9.5, 27.5, 45.5, 63.5]) { const a = new THREE.Mesh(new THREE.SphereGeometry(.05, 10, 8), alarmM); a.position.set(x, 1.95, 12.97); scene.add(a); }
   const exM = std({ map: exitTex(), emissive: 0xffffff, emissiveMap: null, roughness: .5 });
   exM.emissiveMap = exM.map; exM.emissiveIntensity = .9;
-  for (const [x, z] of [[55.6, 11.5], [4.0, 11.5]]) {
+  for (const [x, z] of [[W - 2.4, 11.5], [4.0, 11.5]]) {
     const s = new THREE.Mesh(new THREE.BoxGeometry(.05, .3, .8), [exM, exM, M.plaster, M.plaster, M.plaster, M.plaster]);
     s.position.set(x, 2.85, z); scene.add(s);
     const gl = new THREE.PointLight(0x20ff70, 1.2, 4, 2); gl.position.set(x, 2.6, z); scene.add(gl);
   }
   for (const r of ROOMS) {
     if (r.id === 'lobby') { addSign('중앙현관', 22.5, 13.35, 'x'); continue; }
+    if (r.side === 'e') { addSign(r.name, 76.38, r.z0 + 1.5, 'z'); continue; }
     const dx = r.type === 'wc' ? r.x0 + 2.5 : r.type === 'mnt' ? r.x1 - 1.5 : r.x0 + 1.5;
-    addSign(r.name, dx, r.north ? 10.38 : 12.62, 'x');
+    addSign(r.name, dx, r.north ? r.wz + 1.38 : r.wz - .38, 'x');
   }
 }
 
@@ -1101,18 +1398,31 @@ function buildWorld() {
 
   for (const r of ROOMS) {
     if (r.id === 'lobby') continue;
-    if (r.type === 'wc') new Door(r.x0 + 2, r.wz, r, 1);
+    if (r.side === 'e') { new Door(75, r.z0 + 1, r, -1, false, true); new Door(75, r.z1 - 1, r, 1, false, true); }
+    else if (r.type === 'wc') new Door(r.x0 + 2, r.wz, r, 1);
     else if (r.type === 'mnt') new Door(r.x1 - 2, r.wz, r, -1);
     else { new Door(r.x0 + 1, r.wz, r, -1, r.id === 'staff'); new Door(r.x1 - 1, r.wz, r, 1, r.id === 'staff'); }
+  }
+  new Door(2, 0, RM.c1, 1);
+  for (const f of FAKE_DOORS) {
+    if (f.vert) for (const dz of [-1, 1]) if (cells[I(f.x, f.z + dz)] === WIN) cells[I(f.x, f.z + dz)] = WALL;
+    new Door(f.x, f.z, { id: 'fake', fake: true, name: f.name }, 1, true, !!f.vert);
   }
 
   furnishClass(RM.c1, [{ t: 'sin²θ + cos²θ = 1', x: 40, y: 90, s: 56 }, { t: '수행평가 D-3', x: 40, y: 180, s: 48 }, { t: '떠든 사람:', x: 700, y: 80, s: 40 }, { t: '이O연', x: 720, y: 140, s: 40, c: 'rgba(200,60,50,.8)' }]);
   furnishClass(RM.c2, [{ t: '청소 당번: 3분단', x: 40, y: 80, s: 48 }, { t: '기말고사 범위 — 3단원까지', x: 40, y: 170, s: 46 }, { t: '집에 가고 싶다', x: 640, y: 240, s: 36, c: 'rgba(220,220,200,.5)' }]);
   furnishClass(RM.c3, [{ t: '10월 12일 (월)', x: 30, y: 64, s: 46 }, { t: '주번: 김민지 · 박준호', x: 30, y: 128, s: 40 }, { t: '자 습', x: 440, y: 170, s: 96 }, { t: '※ 하교 시 창문 잠그기', x: 620, y: 248, s: 34 }], true);
   furnishClass(RM.c4, [{ t: '학급회의: 축제 부스', x: 40, y: 80, s: 48 }, { t: '1. 귀신의 집  ← 만장일치', x: 40, y: 170, s: 44 }, { t: '진짜 귀신 나오면 어떡해 ㅋㅋ', x: 520, y: 245, s: 32 }]);
+  furnishClass(RM.c5, [{ t: '급훈: 끝까지 함께', x: 40, y: 80, s: 48 }, { t: '모의고사 D-21', x: 40, y: 170, s: 46 }, { t: '끝까지', x: 720, y: 245, s: 38, c: 'rgba(200,60,50,.75)' }]);
+  furnishClass(RM.c6, [{ t: '자리 바꾸기 — 금요일', x: 40, y: 80, s: 48 }, { t: '결석: 1명', x: 40, y: 170, s: 46 }, { t: '빈 자리에 앉지 마세요', x: 560, y: 245, s: 34, c: 'rgba(220,220,200,.55)' }]);
+  furnishArt(RM.art); furnishBroad(RM.broad);
   furnishMusic(RM.music); furnishSci(RM.sci); furnishWC(RM.wc);
   furnishStaff(RM.staff); furnishNurse(RM.nurse); furnishLib(RM.lib); furnishMnt(RM.mnt); furnishLobby(RM.lobby);
-  furnishCorridor();
+  furnishClass(RM.n1, [{ t: '1학년 1반', x: 40, y: 80, s: 52 }, { t: '입학을 축하합니다!', x: 40, y: 170, s: 46 }, { t: '우리 반 31명 ♡', x: 640, y: 245, s: 36 }]);
+  furnishClass(RM.n2, [{ t: '오늘의 할 일', x: 40, y: 80, s: 48 }, { t: '1. 숙제 검사  2. 청소', x: 40, y: 170, s: 44 }, { t: '주번: 이O연', x: 680, y: 245, s: 34 }]);
+  furnishClass(RM.n3, [{ t: '현장체험학습 안내', x: 40, y: 80, s: 48 }, { t: '준비물: 도시락, 물', x: 40, y: 170, s: 44 }, { t: '같이 가자', x: 720, y: 245, s: 34, c: 'rgba(200,60,50,.7)' }]);
+  furnishAV(RM.av); furnishLockerRoom(RM.lockr); furnishCounsel(RM.counsel);
+  furnishCorridor(); furnishWings();
   buildDesks();
 
   // walls (instanced)
@@ -1123,7 +1433,7 @@ function buildWorld() {
   const lh = WH - 2.35, iL = new THREE.InstancedMesh(new THREE.BoxGeometry(1, lh, 1), M.plaster, nL);
   const m4 = new THREE.Matrix4(), col = new THREE.Color();
   let a = 0, b = 0, c = 0;
-  for (let z = 0; z < H; z++) for (let x = 0; x < W; x++) {
+  for (let z = ZMIN; z <= ZMAX; z++) for (let x = 0; x < W; x++) {
     const v = cells[I(x, z)];
     if (v === WALL) { m4.makeTranslation(x + .5, WH / 2, z + .5); iW.setMatrixAt(a, m4); col.setScalar(rand(.72, 1)); iW.setColorAt(a, col); a++; }
     else if (v === WIN) { m4.makeTranslation(x + .5, WH / 2, z + .5); iWin.setMatrixAt(b++, m4); }
@@ -1136,26 +1446,26 @@ function buildWorld() {
 
   // floors / ceiling
   const base = new THREE.Mesh(new THREE.PlaneGeometry(W, H), floorMat(TEX.floorC, W / 2, H / 2, .5));
-  base.rotation.x = -Math.PI / 2; base.position.set(W / 2, 0, H / 2); base.receiveShadow = true; scene.add(base);
+  base.rotation.x = -Math.PI / 2; base.position.set(W / 2, 0, ZMIN + H / 2); base.receiveShadow = true; scene.add(base);
   for (const r of ROOMS) {
-    const w = r.x1 - r.x0 + 1, d = 8;
-    const ft = r.type === 'wc' ? TEX.floorT : r.type === 'lobby' || r.type === 'mnt' ? TEX.floorS : r.type === 'staff' || r.type === 'nurse' ? TEX.floorC : TEX.floorW;
+    const w = r.x1 - r.x0 + 1, d = r.z1 - r.z0 + 1;
+    const ft = r.type === 'wc' ? TEX.floorT : r.type === 'lobby' || r.type === 'mnt' || r.type === 'lockr' ? TEX.floorS : r.type === 'staff' || r.type === 'nurse' || r.type === 'broad' || r.type === 'counsel' || r.type === 'av' ? TEX.floorC : TEX.floorW;
     const rep = ft === TEX.floorT ? 1 : .5;
     const f = new THREE.Mesh(new THREE.PlaneGeometry(w, d), floorMat(ft, w * rep, d * rep, ft === TEX.floorW ? .7 : .5));
     f.rotation.x = -Math.PI / 2; f.position.set(r.x0 + w / 2, .003, r.z0 + d / 2); f.receiveShadow = true; scene.add(f);
   }
   const ceil = new THREE.Mesh(new THREE.PlaneGeometry(W, H), floorMat(TEX.ceil, W / 2, H / 2, 1));
-  ceil.rotation.x = Math.PI / 2; ceil.position.set(W / 2, WH, H / 2); scene.add(ceil);
+  ceil.rotation.x = Math.PI / 2; ceil.position.set(W / 2, WH, ZMIN + H / 2); scene.add(ceil);
 
   // light fixtures
   const fx = new THREE.InstancedMesh(new THREE.BoxGeometry(1.2, .07, .22), M.tubeOff, fixtureList.length);
-  fixtureList.forEach(([x, z], i) => { m4.makeTranslation(x, WH - .04, z); fx.setMatrixAt(i, m4); });
+  fixtureList.forEach(([x, z, rot], i) => { m4.makeRotationY(rot ? Math.PI / 2 : 0).setPosition(x, WH - .04, z); fx.setMatrixAt(i, m4); });
   scene.add(fx);
-  for (const [x, mode, base] of [[12, 'steady', 5], [30, 'broken', 6]]) {
+  for (const [x, z, mode, base, rot] of [[12, 11.5, 'steady', 5], [30, 11.5, 'broken', 6], [66, 11.5, 'broken', 4], [42, -44.5, 'broken', 4], [77.5, -22, 'steady', 4, 1], [2.5, -34, 'steady', 4, 1]]) {
     const mat = std({ color: 0xdddddd, emissive: 0xe0eaff, emissiveIntensity: 1.4 });
-    const tube = new THREE.Mesh(new THREE.BoxGeometry(1.2, .07, .22), mat); tube.position.set(x, WH - .04, 11.5); scene.add(tube);
-    const l = new THREE.PointLight(0xdfe8ff, base, 11, 2); l.position.set(x, WH - .3, 11.5); scene.add(l);
-    clights.push({ light: l, mat, mode, base, t: 0, on: true, dip: 0, pos: new THREE.Vector3(x, 0, 11.5) });
+    const tube = new THREE.Mesh(new THREE.BoxGeometry(1.2, .07, .22), mat); tube.position.set(x, WH - .04, z); tube.rotation.y = rot ? Math.PI / 2 : 0; scene.add(tube);
+    const l = new THREE.PointLight(0xdfe8ff, base, 11, 2); l.position.set(x, WH - .3, z); scene.add(l);
+    clights.push({ light: l, mat, mode, base, t: 0, on: true, dip: 0, dead: false, pos: new THREE.Vector3(x, 0, z) });
   }
   evTube = new THREE.Mesh(new THREE.BoxGeometry(1.2, .07, .22), std({ color: 0xdddddd, emissive: 0xe0eaff, emissiveIntensity: 0 }));
   evTube.position.set(0, WH - .04, 11.5); scene.add(evTube);
@@ -1167,6 +1477,7 @@ function buildWorld() {
 
   buildItems();
   buildGhost();
+  buildScares();
 }
 
 /* =========================================================
@@ -1177,18 +1488,21 @@ const NOTES = {
   n2: { title: '보건일지 — 2009. 11. 13 (금)', body: '2학년 3반 이O연. 6교시 후 두통 호소.\n3번 침대에서 휴식.\n\n하교 시간에 깨우러 갔으나 침대는 비어 있었음.\n가방과 실내화는 그대로.\n\n그 아이는 다음 날도, 그 다음 날도 오지 않았다.\n\n...요즘도 저녁이 되면\n3번 침대 커튼이 저절로 닫힌다.' },
   n3: { title: '칸막이 벽에 새겨진 글씨', scrawl: true, body: '문이 안 열려\n아무도 안 와\n선생님 저 여기 있어요\n춥다\n\n누가 같이 있어주면 좋겠다\n같이 있어줘\n같이 있어줘\n같이있어줘같이있어줘같이있어줘\n\n이제 네 차례야' },
   n4: { title: '[야간 경비 일지]', body: '밤마다 2층 복도에서 맨발로 걷는 소리가 난다.\n손전등을 비추면 멈춘다. 그리고... 이쪽을 본다.\n\n그것은 빛을 보고 온다. 불을 끄면 잘 못 찾는다.\n들키면 무조건 뛰어라. 그리고 사물함에 숨어라.\n숨는 걸 들키지만 않으면, 그냥 지나간다.\n\n현관 열쇠는 이 방 열쇠함에.\n쇠사슬 절단기는 관리실 작업대에 있다.\n\n나는 오늘부로 그만둔다.' },
+  n5: { title: '방송부 인수인계 노트', body: '하교 방송 끝나면 장비 전원 꼭 내릴 것.\n\n그리고 이건 선배한테 들은 얘긴데,\n밤에 이 방 마이크가 혼자 켜지는 날이 있대.\n\n스피커에서 여자애 목소리로\n출석을 부른다고.\n\n...자기 이름만 빼고.' },
 };
 function buildItems() {
   addItem('note', 25.5, .755, 2.25, { note: 'n1' });
-  const keySpots = [[11.5, .77, 19.9], [40.5, 1.02, 15.5], [2.3, 1.07, 5], [29.3, 1.07, 18], [28.75, 1.32, 2.4]];
+  const keySpots = [[11.5, .77, 19.9], [40.5, 1.02, 15.5], [2.3, 1.07, 5], [29.3, 1.07, 18], [28.75, 1.32, 2.4], [72.4, .8, 5.6]];
   const ks = pick(keySpots); addItem('staffKey', ...ks);
   addItem('cutter', 53.5, .95, 21.25);
   addItem('frontKey', 1.16, 1.5, 18.5, { active: () => F.staffOpen });
-  const bat = [[11.3, 1.07, 5.2], [40.2, .9, 3], [44, .78, 19.5], [19.22, 1.27, 17.5], [46.3, .87, 5], [46.3, 2.03, 18], [31.9, .75, 19.3], [5, .77, 17.9], [33, .02, 12.5], [53.5, .02, 4.5]]
-    .filter(p => p[0] !== ks[0] || p[2] !== ks[2]).sort(() => Math.random() - .5).slice(0, 5);
+  const bat = [[11.3, 1.07, 5.2], [40.2, .9, 3], [44, .78, 19.5], [19.22, 1.27, 17.5], [46.3, .87, 5], [46.3, 2.03, 18], [31.9, .75, 19.3], [5, .77, 17.9], [33, .02, 12.5], [53.5, .02, 4.5], [70.3, .8, 3.0], [72.6, .845, 21.3], [68.5, .02, 11.2],
+    [30.5, .02, -44.3], [77.2, .02, -27], [2.2, .02, -27.5], [68.9, .42, -24.3], [70.2, .5, -6]]
+    .filter(p => p[0] !== ks[0] || p[2] !== ks[2]).sort(() => Math.random() - .5).slice(0, 9);
   for (const p of bat) addItem('battery', ...p);
   addItem('note', 17.05, .56, 20.95, { note: 'n2' });
   addItem('note', 3.6, .77, 18.1, { note: 'n4' });
+  addItem('note', 71.6, .835, 21.25, { note: 'n5' });
   addItem('note', 56, 1.35, 1.1, { note: 'n3', noMesh: true, active: () => F.stall });
   interactables.push({ pos: new THREE.Vector3(56, 1.2, 2.6), r: .7, range: 2.2, label: () => '칸 문 열기', use: openStall, active: () => !F.stall });
   interactables.push({ pos: new THREE.Vector3(28.8, 1.0, 2.6), r: .6, range: 2.0, label: () => '건반 누르기', use: () => A.pianoNote() });
@@ -1427,7 +1741,8 @@ function buildGhost() {
   const aL = arm(-1), aR = arm(1);
   root.traverse(o => { if (o.isMesh && o.material !== eyeM) { o.castShadow = true; } });
   root.visible = false; scene.add(root);
-  const jl = new THREE.PointLight(0xff6050, 0, 2.5, 2); jl.position.set(0, 2.3, .6); root.add(jl);
+  // 숨겨진 root 안에 두면 등장 순간 광원 수가 바뀌어 모든 셰이더가 재컴파일됨
+  const jl = new THREE.PointLight(0xff6050, 0, 2.5, 2); scene.add(jl);
   ghost.model = { root, body, head, legL, legR, aL, aR, face, faceM, faceN, faceS, frontHair, eyes, jl };
 }
 function animateGhost(dt) {
@@ -1485,9 +1800,9 @@ function findPath(sx, sz, tx, tz) {
   const s = I(sx, sz), goal = I(tx, tz), q = [s]; prevArr[s] = s; let h = 0;
   while (h < q.length) {
     const c = q[h++]; if (c === goal) break;
-    const cx = c % W, cz = (c / W) | 0;
+    const cx = cellX(c), cz = cellZ(c);
     for (const [dx, dz] of DIRS) {
-      const nx = cx + dx, nz = cz + dz; if (nx < 0 || nz < 0 || nx >= W || nz >= H) continue;
+      const nx = cx + dx, nz = cz + dz; if (nx < 0 || nz < ZMIN || nx >= W || nz > ZMAX) continue;
       const n = I(nx, nz); if (prevArr[n] !== -1 || !ghostWalk(nx, nz)) continue;
       if (dx && dz && (!ghostWalk(cx + dx, cz) || !ghostWalk(cx, cz + dz))) continue;
       prevArr[n] = c; q.push(n);
@@ -1495,7 +1810,7 @@ function findPath(sx, sz, tx, tz) {
   }
   if (prevArr[goal] === -1) return null;
   const path = []; let c = goal;
-  while (c !== s) { path.push({ x: c % W + .5, z: ((c / W) | 0) + .5 }); c = prevArr[c]; }
+  while (c !== s) { path.push({ x: cellX(c) + .5, z: cellZ(c) + .5 }); c = prevArr[c]; }
   return path.reverse();
 }
 function ghostGo(x, z) { const p = findPath(ghost.pos.x, ghost.pos.z, x, z); ghost.path = p || []; return !!p; }
@@ -1517,7 +1832,9 @@ function ghostFollow(dt, speed) {
 }
 let patrolPts = [];
 function buildPatrol() {
-  for (let x = 4; x <= 55; x += 3) patrolPts.push([x + .5, 11.5]);
+  for (let x = 4; x <= W - 3; x += 3) patrolPts.push([x + .5, 11.5], [x + .5, -44.5]);
+  for (let z = -42; z <= 8; z += 3) patrolPts.push([77.5, z + .5]);
+  for (let z = -42; z <= -3; z += 3) patrolPts.push([2.5, z + .5]);
   for (const r of ROOMS) if (r.id !== 'staff') patrolPts.push([r.cx, r.cz]);
 }
 function randomCellNear(x, z, rad) {
@@ -1529,7 +1846,7 @@ function randomCellNear(x, z, rad) {
 }
 function teleportGhostNear(minD, maxD) {
   const c = [];
-  for (let z = 1; z < H - 1; z++) for (let x = 1; x < W - 1; x++) {
+  for (let z = ZMIN + 1; z < ZMAX; z++) for (let x = 1; x < W - 1; x++) {
     if (cellAt(x, z) !== EMPTY || !ghostWalk(x, z)) continue;
     const d = Math.hypot(x + .5 - player.x, z + .5 - player.z);
     if (d < minD || d > maxD) continue;
@@ -1635,10 +1952,10 @@ function activateGhost() {
   const g = ghost;
   let best = null, bd = 0;
   for (let k = 0; k < 60; k++) {
-    const x = rand(4, 55), z = 11.5; if (cellAt(Math.floor(x), 11) !== EMPTY) continue;
+    const x = rand(4, W - 3), z = 11.5; if (cellAt(Math.floor(x), 11) !== EMPTY) continue;
     const d = Math.abs(x - player.x) + Math.abs(z - player.z); if (d > bd && !lineClear(x, z, player.x, player.z)) { bd = d; best = [x, z]; }
   }
-  if (!best) best = player.x < 29 ? [54.5, 11.5] : [4.5, 11.5];
+  if (!best) best = player.x < W / 2 ? [W - 3.5, 11.5] : [4.5, 11.5];
   g.pos.set(best[0], 0, best[1]); g.active = true; g.state = 'patrol'; g.graceT = 5; g.senseT = 14; g.path = [];
   g.model.root.visible = true;
 }
@@ -1649,7 +1966,9 @@ function activateGhost() {
 const game = { state: 'loading', paused: false, time: 0 };
 const F = {};
 const inv = { staffKey: false, frontKey: false, cutter: false };
-const player = { x: 26.08, z: 2.3, yaw: Math.PI / 2, pitch: -.32, hYaw: 0, eyeH: 1.3, crouch: false, stamina: 100, exhausted: false, battery: 100, flashOn: true, hidden: null, bob: 0, lastStep: 0, moving: false, sprinting: false, breathT: 0 };
+const SPAWN = { x: 26.08, z: 2.3, yaw: Math.PI / 2, pitch: -.32 };
+const MAX_LIVES = 3;
+const player = { x: SPAWN.x, z: SPAWN.z, yaw: SPAWN.yaw, pitch: SPAWN.pitch, lives: MAX_LIVES, hYaw: 0, eyeH: 1.3, crouch: false, stamina: 100, exhausted: false, battery: 100, flashOn: true, hidden: null, bob: 0, lastStep: 0, moving: false, sprinting: false, breathT: 0 };
 const keys = {};
 let noteOpen = false, focus = null, flickerT = 0, fearS = 0, hbT = 0, ambT = 12, dripT = 3;
 const timers = [];
@@ -1674,6 +1993,11 @@ function renderObj() {
   if (sig === prev) return;
   ul.dataset.sig = sig;
   ul.innerHTML = L.map(([t, d]) => `<li class="${d ? 'done' : ''} ${prev.includes(t) ? '' : 'new'}">${t}</li>`).join('');
+}
+function renderLives() {
+  let h = '목숨 · ';
+  for (let i = 0; i < MAX_LIVES; i++) h += `<span class="${i < player.lives ? '' : 'lost'}">♥</span>`;
+  $('lives').innerHTML = h;
 }
 function renderInv() {
   const n = [];
@@ -1873,10 +2197,13 @@ function updateEvents(dt) {
   if (r && r.id === 'wc' && !F.wc) { F.wc = true; startHum(56, 1.2, 1.8); later(1, () => sub('누가... 흥얼거리고 있어.\n마지막 칸에서.', 4)); }
   if (r && r.id === 'lobby' && !F.lobby) { F.lobby = true; sub('현관이다. 저 문만 열면...', 3); }
   if (r && r.id === 'nurse' && !F.nurse) { F.nurse = true; later(.5, () => { flickerT = .4; A.whisper(.06); }); }
-  if (anatomyHead) {
-    const p = anatomyHead.getWorldPosition(new THREE.Vector3());
+  if (r && r.id === 'art' && !F.art) { F.art = true; later(.6, () => sub('물감 냄새... 아직 마르지도 않았어.', 3)); }
+  if (r && r.id === 'broad' && !F.broad) { F.broad = true; onAirOn(); }
+  for (const h of [anatomyHead, bustHead]) {
+    if (!h) continue;
+    const p = h.getWorldPosition(new THREE.Vector3());
     const fwd = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion), to = p.clone().sub(camera.position).normalize();
-    if (fwd.dot(to) < .4) anatomyHead.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z) - anatomyHead.parent.rotation.y;
+    if (fwd.dot(to) < .4) h.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z) - h.parent.rotation.y;
   }
   updateHum(dt);
   ambT -= dt;
@@ -1886,6 +2213,161 @@ function updateEvents(dt) {
     A[ev] && A[ev]();
   }
   if (r && r.id === 'wc') { dripT -= dt; if (dripT <= 0) { dripT = rand(1.2, 3.5); A.drip(); } }
+}
+
+/* =========================================================
+   SCARES (구간마다 하나씩)
+   ========================================================= */
+const scares = [], tweens = [], warmList = [];
+function addScare(x, z, r, fn, cond) { scares.push({ x, z, r, fn, cond, done: false }); }
+const _sv = new THREE.Vector3(), _sf = new THREE.Vector3();
+function lookingAt(x, y, z, minDot = .9) {
+  const cp = camera.position; _sv.set(x - cp.x, y - cp.y, z - cp.z).normalize();
+  _sf.set(0, 0, -1).applyQuaternion(camera.quaternion);
+  return _sf.dot(_sv) > minDot && lineClear(cp.x, cp.z, x, z);
+}
+function spot(x, y, z, wet = .4) { if (!A.ok) return; const p = mkPanner(); setPos(p, x, y, z); out(p, wet); return p; }
+function hiddenDecal(tex, w, h, x, y, z, ry, op) { const d = decal(tex, w, h, x, y, z, ry, op); d.visible = false; warmList.push(d); return d; }
+
+function buildScares() {
+  // 동쪽 동 입구: 어둠 속에서 굴러오는 공
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(.11, 16, 12), std({ color: 0x9a1a14, roughness: .55 }));
+  ball.position.set(77.3, .11, -16); ball.castShadow = true; scene.add(ball);
+  addScare(77.5, 6, 3.5, () => {
+    let v = 3.4, rollT = 0; const stopZ = player.z - 2.4, p = spot(ball.position.x, .1, ball.position.z, .3);
+    tweens.push(dt => {
+      v = Math.max(.35, v - dt * .3);
+      ball.position.z = Math.min(stopZ, ball.position.z + v * dt); ball.rotation.x += v * dt / .11;
+      if (p) setPos(p, ball.position.x, .1, ball.position.z);
+      if ((rollT -= dt) <= 0) { rollT = .11; noise({ type: 'lowpass', f: 320, dur: .14, gain: .35, wet: .2, dest: p }); }
+      if (ball.position.z >= stopZ) { later(.7, () => { A.giggle(); sub('...누가 굴린 거야?', 3); }); return true; }
+    });
+  }, () => player.x > 75.5 && player.z < 9);
+
+  // 탈의실: 안에서 두드리는 사물함
+  addScare(lockr.unit.position.x, lockr.unit.position.z + .5, 3.2, () => {
+    const u = lockr.unit, d = lockr.door, base = u.position.clone(), p = spot(base.x, 1.2, base.z, .5);
+    let t = 0, n = 0, shake = 0, opened = false;
+    ghostHear(base.x, base.z, 12);
+    tweens.push(dt => {
+      t += dt; shake = Math.max(0, shake - dt);
+      if (n < 7 && t > n * .26 + (n > 3 ? .5 : 0)) {
+        n++; shake = .09;
+        noise({ f: 650, q: 1.3, dur: .22, gain: .8, wet: .45, dest: p }); tone({ f: 150, f2: 70, dur: .18, gain: .5, wet: .2, dest: p });
+      }
+      const j = shake > 0 ? .025 : 0;
+      u.position.set(base.x + rand(-j, j), base.y, base.z + rand(-j, j)); d.position.x = base.x - .425 + (u.position.x - base.x);
+      if (n >= 7 && t > 2.6) {
+        if (!opened) { opened = true; A.door(); }
+        const k = Math.min(1, (t - 2.6) / .5); d.rotation.y = -1.7 * (1 - Math.pow(1 - k, 3));
+        if (k >= 1) { sub('...비어 있어.', 2.5); return true; }
+      }
+    });
+  }, () => roomAt(player.x, player.z) === RM.lockr);
+
+  // 동쪽 복도: 창밖에 붙은 얼굴
+  const wface = plane(.52, .64, new THREE.MeshBasicMaterial({ map: faceTex(true), transparent: true, alphaTest: .04, color: 0xb0aca4 }), 78.985, 1.62, -33.5, FACE.nx);
+  wface.visible = false; warmList.push(wface);
+  const wprint = hiddenDecal(handTex(), .7, .7, 78.985, 1.3, -33.3, FACE.nx, .75);
+  addScare(77.5, -33.5, 7, () => {
+    wface.visible = true; flickerT = .35; A.stinger(false); A.slam();
+    later(.38, () => { wface.visible = false; wprint.visible = true; });
+  }, () => lookingAt(78.98, 1.62, -33.5, .93));
+
+  // 상담실: 혼자 울리는 전화
+  Object.assign(counsel, { ringing: false, answered: false, ringT: 0 });
+  addScare(RM.counsel.cx, RM.counsel.cz, 6, () => { counsel.ringing = true; }, () => roomAt(player.x, player.z) === RM.counsel);
+  interactables.push({
+    pos: counsel.phone, r: .3, range: 2.0, label: () => '전화 받기', active: () => counsel.ringing && !counsel.answered,
+    use: () => {
+      counsel.answered = true; counsel.ringing = false; A.click(); sub('"...여보세요?"', 2);
+      later(2.4, () => { A.whisper(.2); sub('"뒤에 있어."', 3, true); });
+      later(3.6, () => {
+        const fx = -Math.sin(player.yaw), fz = -Math.cos(player.yaw);
+        let d = .9; while (d > .3 && isSolid(Math.floor(player.x - fx * d), Math.floor(player.z - fz * d))) d -= .2;
+        counsel.doll.position.set(player.x - fx * d, 0, player.z - fz * d); counsel.doll.rotation.y = Math.atan2(fx, fz);
+        flickerT = .6; A.stinger(false);
+      });
+    },
+  });
+
+  // 북쪽 복도: 끝에 서 있는 아이 (어느 쪽에서 들어오든 한 번)
+  const fig = new THREE.Mesh(new THREE.PlaneGeometry(.9, 1.8), new THREE.MeshBasicMaterial({ map: figureTex(), transparent: true, alphaTest: .05, color: 0xa8a69e }));
+  fig.position.set(60, .9, -45); fig.visible = false; scene.add(fig); warmList.push(fig);
+  const showFig = () => {
+    if (F.fig) return; F.fig = true;
+    fig.position.set(clamp(player.x + (player.x > 40 ? -16 : 16), 2, 77), .9, -45); fig.visible = true;
+    let t = 0, seen = 0;
+    tweens.push(dt => {
+      t += dt; fig.lookAt(camera.position.x, .9, camera.position.z);
+      if (lookingAt(fig.position.x, 1.2, fig.position.z, .97)) seen += dt;
+      if (seen > 1.1 || Math.hypot(fig.position.x - player.x, fig.position.z - player.z) < 8) { fig.visible = false; flickerT = .4; A.buzz(); A.stinger(false); return true; }
+      if (t > 12) { fig.visible = false; return true; }
+    });
+  };
+  addScare(77.5, -45, 3, showFig, () => player.z < -43);
+  addScare(2.5, -45, 3, showFig, () => player.z < -43);
+
+  // 1학년 3반: 저절로 닫히는 문
+  const n3door = doors.find(d => d.room === RM.n3 && d.x === RM.n3.x1 - 1);
+  n3door.open = true; n3door.t = 1;
+  addScare(n3door.x + .5, -45, 4.5, () => { n3door.setOpen(false, true); flickerT = .3; later(1, () => sub('...바람인가?', 2.5)); });
+
+  // 1학년 2반: 등 돌린 사이 바뀌는 칠판
+  addScare(RM.n2.cx, RM.n2.cz, 6, () => {
+    let t = 0, changed = false; const bx = RM.n2.x0 + .07, bz = wp(RM.n2, 0, 4)[1];
+    tweens.push(dt => {
+      if (roomAt(player.x, player.z) !== RM.n2) return changed;
+      t += dt;
+      if (!changed && t > 2.5 && -Math.sin(player.yaw) > .4) {
+        changed = true; A.whisper(.15);
+        boards.n2.draw([{ t: '뒤 돌 아 보 지 마', x: 90, y: 180, s: 110, c: 'rgba(160,15,15,.92)', r: -.03 }]);
+      }
+      if (changed && lookingAt(bx, 1.55, bz, .85)) { A.stinger(false); flickerT = .3; sub('...분명 아까는 없었는데.', 3); return true; }
+    });
+  }, () => roomAt(player.x, player.z) === RM.n2);
+
+  // 시청각실: 혼자 켜지는 영사기
+  addScare(RM.av.cx, RM.av.cz, 8, () => {
+    later(.8, () => { av.screenM.color.set(0x8a929a); av.lensM.emissiveIntensity = 2; A.buzz(); });
+    later(3.2, () => { av.screenM.map = ghost.model.faceS; av.screenM.color.set(0xffffff); flickerT = .4; A.stinger(); A.whisper(.15); });
+    later(3.6, () => { av.screenM.map = cctv.tex; av.screenM.color.set(0x8a929a); });
+    later(9, () => { av.screenM.color.set(0x000000); av.lensM.emissiveIntensity = 0; });
+  }, () => roomAt(player.x, player.z) === RM.av);
+
+  // 북쪽 복도: 바로 뒤까지 따라오는 발소리
+  addScare(14, -45, 3, () => {
+    const fx = -Math.sin(player.yaw), fz = -Math.cos(player.yaw), p = spot(player.x, .1, player.z, .35);
+    for (let i = 0; i < 8; i++) later(i * .3, () => {
+      const d = 7 - i * .75; if (p) setPos(p, player.x - fx * d, .1, player.z - fz * d);
+      noise({ type: 'lowpass', f: 750, dur: .1, gain: .55, wet: .3, dest: p }); tone({ f: 85, f2: 40, dur: .12, gain: .3, wet: 0, dest: p });
+    });
+    later(2.8, () => sub('...방금, 바로 뒤에서.', 3));
+  }, () => player.z < -43);
+
+  // 서쪽 복도: 바깥에서 창문을 두드리는 손
+  const hands = [-11.5, -13.5, -15.5, -17.5, -19.5, -21.5].map(z => hiddenDecal(handTex(), .75, .75, 1.012, rand(1.2, 1.9), z, FACE.px, .85));
+  addScare(2.5, -16, 5.5, () => {
+    const seq = player.z > -16 ? [...hands].reverse() : hands;
+    seq.forEach((d, i) => later(i * .3, () => {
+      d.visible = true; const p = spot(.5, 1.5, d.position.z, .5);
+      noise({ type: 'lowpass', f: 1100, dur: .1, gain: .9, wet: .4, dest: p }); tone({ f: 95, f2: 50, dur: .1, gain: .4, wet: 0, dest: p });
+    }));
+    later(seq.length * .3 + .6, () => { A.giggle(); sub('창밖은... 2층인데.', 3); });
+  });
+
+  // 서쪽 복도: 머리 위에서 터지는 형광등
+  const wl = clights.find(L => L.pos.x === 2.5 && L.pos.z === -34);
+  addScare(2.5, -31, 3, () => { wl.dead = true; flickerT = .5; A.snap(); A.buzz(); later(1.4, A.giggle); });
+}
+function updateScares(dt) {
+  if (!player.hidden) for (const s of scares) if (!s.done && Math.hypot(player.x - s.x, player.z - s.z) < s.r && (!s.cond || s.cond())) { s.done = true; s.fn(); }
+  for (let i = tweens.length - 1; i >= 0; i--) if (tweens[i](dt)) tweens.splice(i, 1);
+  if (counsel.ringing && (counsel.ringT -= dt) <= 0) {
+    counsel.ringT = 3;
+    counsel.pan ||= spot(counsel.phone.x, counsel.phone.y, counsel.phone.z, .4);
+    for (let i = 0; i < 2; i++) { tone({ f: 1250, type: 'square', dur: .35, gain: .045, wet: .4, dest: counsel.pan, when: i * .5 }); tone({ f: 1560, type: 'square', dur: .35, gain: .03, wet: .4, dest: counsel.pan, when: i * .5 + .02 }); }
+  }
 }
 
 /* =========================================================
@@ -1910,6 +2392,7 @@ function updateStatic(dt) {
 function updateLights(dt) {
   flickerT -= dt;
   for (const L of clights) {
+    if (L.dead) { L.light.intensity = 0; L.mat.emissiveIntensity = 0; continue; }
     let v = 1;
     if (L.mode === 'steady') { if (Math.random() < .003) L.dip = rand(.05, .3); if (L.dip > 0) { L.dip -= dt; v = Math.random() < .5 ? .08 : .6; } }
     else { L.t -= dt; if (L.t <= 0) { L.on = !L.on; L.t = L.on ? rand(.03, .3) : rand(.05, 2.8); if (L.on && game.state === 'play') A.buzz(); } v = L.on ? 1 : 0; }
@@ -1966,6 +2449,7 @@ const DEATH_LINES = ['그 아이는 아직도, 같이 있어 줄 친구를 찾�
 function killPlayer() {
   if (game.state !== 'play') return;
   game.state = 'dying'; deathT = 0; noteOpen = false; $('note').classList.add('hidden');
+  player.lives = Math.max(0, player.lives - 1); renderLives();
   const g = ghost, m = g.model;
   m.frontHair.visible = false; m.faceM.map = m.faceS; m.faceM.emissiveMap = m.faceS; m.faceM.emissiveIntensity = .5; m.faceM.needsUpdate = true;
   const cp = camera.position.clone(), fw = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion); fw.y = 0; fw.normalize();
@@ -1974,6 +2458,7 @@ function killPlayer() {
   m.root.position.set(gp.x, cp.y - 2.32 * GS, gp.z); m.root.rotation.y = g.yaw; m.root.visible = true;
   m.head.rotation.set(0, 0, .25); m.body.rotation.set(0, 0, 0);
   m.aL.sh.rotation.set(-1.5, 0, .4); m.aR.sh.rotation.set(-1.5, 0, -.4);
+  m.root.updateMatrixWorld(); m.root.localToWorld(m.jl.position.set(0, 2.3, .6));
   m.jl.intensity = 2.5;
   flash.intensity = 30;
   A.scream(); A.chase.gain.setTargetAtTime(0, A.ctx.currentTime, .1); A.gVoice.gain.setTargetAtTime(0, A.ctx.currentTime, .1);
@@ -1991,12 +2476,34 @@ function updateDeath(dt) {
   if (deathT > 1.5 && !$('death').dataset.shown) {
     $('death').dataset.shown = 1;
     m.root.visible = false; flash.intensity = 0;
-    $('deathLine').textContent = pick(DEATH_LINES);
+    const over = player.lives <= 0;
+    $('deathLine').textContent = over ? pick(DEATH_LINES) : `남은 목숨 ${'♥'.repeat(player.lives)}  —  아직, 끝나지 않았다.`;
+    $('retry').textContent = over ? '처음부터' : '다시 눈을 뜬다';
     $('death').classList.remove('hidden');
     document.exitPointerLock();
   }
 }
-$('retry').addEventListener('click', () => location.reload());
+function respawn() {
+  const g = ghost, m = g.model;
+  $('death').classList.add('hidden'); delete $('death').dataset.shown;
+  Object.assign(player, {
+    x: SPAWN.x, z: SPAWN.z, yaw: SPAWN.yaw, pitch: SPAWN.pitch, hYaw: 0, eyeH: 1.15, crouch: false,
+    stamina: 100, exhausted: false, hidden: null, flashOn: true, battery: Math.max(player.battery, 40),
+  });
+  m.frontHair.visible = true; m.faceM.map = m.faceM.emissiveMap = m.faceN; m.faceM.emissiveIntensity = .12; m.faceM.needsUpdate = true;
+  m.jl.intensity = 0;
+  g.pos.set(W - 4.5, 0, 11.5); g.path = []; g.state = 'patrol'; g.graceT = 8; g.senseT = 25;
+  g.sawHide = null; g.sniffed = false; g.lostT = 0; g.chaseT = 0; g.farT = 0; g.dist = 99;
+  m.root.visible = g.active;
+  fearS = 0; flickerT = 0;
+  if (A.ok) A.muffle.frequency.setTargetAtTime(20000, A.ctx.currentTime, .1);
+  $('lockerView').classList.add('hidden'); $('hud').classList.remove('hidden');
+  camera.position.set(player.x, player.eyeH, player.z);
+  game.state = 'play'; lock();
+  openEyes(); renderLives();
+  later(2.6, () => sub(`...또 교실이다.\n남은 목숨 ${player.lives}개`, 3.5));
+}
+$('retry').addEventListener('click', () => { if (player.lives > 0) respawn(); else location.reload(); });
 function startEnding() {
   game.state = 'ending'; endT = 0;
   ghost.active = false; ghost.model.root.visible = false;
@@ -2037,7 +2544,7 @@ function stepPlay(dt) {
   game.time += dt;
   updateTimers(dt); updatePlayer(dt);
   for (const d of doors) d.update(dt);
-  updateGhost(dt); updateEvents(dt); updateLights(dt); updateInteract(dt); updateFx(dt); updateAudio(dt); updateStatic(dt);
+  updateGhost(dt); updateEvents(dt); updateScares(dt); updateLights(dt); updateInteract(dt); updateFx(dt); updateAudio(dt); updateStatic(dt);
   renderObj();
 }
 function loop(now) {
@@ -2060,21 +2567,37 @@ function beginGame() {
   game.state = 'play'; lock();
   player.eyeH = 1.15;
   camera.position.set(player.x, player.eyeH, player.z);
+  openEyes();
+  later(2.2, () => A.chime(true));
+  later(4.2, () => sub('...몇 시지? 왜 이렇게 어두워.', 3.5));
+  later(8.5, () => sub('[WASD] 이동   [F] 손전등   [E] 상호작용   [C] 앉기', 5));
+  renderObj(); renderInv(); renderLives();
+}
+function openEyes() {
   const lt = $('lidTop'), lb = $('lidBot');
   lt.style.transition = lb.style.transition = 'none'; lt.style.transform = lb.style.transform = 'translateY(0)';
   setTimeout(() => { lt.style.transition = lb.style.transition = 'transform 1.4s cubic-bezier(.6,0,.4,1)'; lt.style.transform = 'translateY(-70%)'; lb.style.transform = 'translateY(70%)'; }, 600);
   setTimeout(() => { lt.style.transform = lb.style.transform = 'translateY(0)'; }, 2100);
   setTimeout(() => { lt.style.transform = 'translateY(-100%)'; lb.style.transform = 'translateY(100%)'; }, 3000);
-  later(2.2, () => A.chime(true));
-  later(4.2, () => sub('...몇 시지? 왜 이렇게 어두워.', 3.5));
-  later(8.5, () => sub('[WASD] 이동   [F] 손전등   [E] 상호작용   [C] 앉기', 5));
-  renderObj(); renderInv();
+}
+function warmup() {
+  const m = ghost.model, culled = [];
+  m.root.visible = true; bloodDecal.visible = true;
+  for (const o of warmList) o.visible = true;
+  scene.traverse(o => { if (o.frustumCulled) { o.frustumCulled = false; culled.push(o); } });
+  renderer.render(scene, camera);
+  m.faceM.map = m.faceM.emissiveMap = m.faceS; m.faceM.needsUpdate = true;
+  renderer.render(scene, camera);
+  m.faceM.map = m.faceM.emissiveMap = m.faceN; m.faceM.needsUpdate = true;
+  for (const o of culled) o.frustumCulled = true;
+  m.root.visible = false; bloodDecal.visible = false;
+  for (const o of warmList) o.visible = false;
 }
 async function boot() {
   try {
     await Promise.race([Promise.all([document.fonts.load('40px "Nanum Pen Script"'), document.fonts.load('40px "Nanum Myeongjo"'), document.fonts.load('40px "Noto Sans KR"')]), new Promise(r => setTimeout(r, 3000))]);
   } catch (e) { }
-  buildWorld(); buildPatrol();
+  buildWorld(); buildPatrol(); warmup();
   game.state = 'title';
   $('startBtn').textContent = '클릭하여 시작';
   requestAnimationFrame(loop);
@@ -2085,7 +2608,7 @@ async function boot() {
   });
   $('intro').addEventListener('click', () => { if (game.state === 'intro') beginGame(); });
 }
-window.__g = { player, ghost, F, inv, game, doors, items, killPlayer, triggerHunt, pickItem, stepPlay, keys, lockers, enterLocker, exitLocker, ghostHear, activateGhost, teleport: (x, z) => { player.x = x; player.z = z; } };
+window.__g = { player, ghost, F, inv, game, doors, items, killPlayer, triggerHunt, pickItem, stepPlay, keys, lockers, enterLocker, exitLocker, ghostHear, activateGhost, cellAt, findPath, scares, teleport: (x, z) => { player.x = x; player.z = z; } };
 boot();
 </script>
 </body>
